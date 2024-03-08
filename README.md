@@ -1,6 +1,11 @@
 # Disney-Reservation-Checker
 Checks for reservation availability for Walt Disney World restaurants
 
+# 2024 Update!
+Seems like there is a decent amount of love for this project and I'm sure disney has changed there website a lot since written. I checked today and there seems to be a much different process including having to log in to see reservations. This might be something worth exploring but if you have created a better version of this repo feel free to make an empty PR and I can highlight it on this Project. 
+
+Best of luck with all your disney reservations
+
 ### Purpose
 
 When booking a vacation at Walt Disney World you can reserve a table up to 180 days in advanced. Some of the more desireable
