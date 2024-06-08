@@ -31,18 +31,36 @@ def make_reservation():
     # Sign in
     try:
         # Enter email
-        email_input_xpath = '//*[@id="root"]/div[3]/div/div[2]/div/div/form/div[2]/div/label'
-        email_element = WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, email_input_xpath)))
-        email_element.click()
-        email_element.send_keys(DISNEY_EMAIL)
+        iframe = WebDriverWait(driver, TIMEOUT).until(
+            EC.presence_of_element_located((By.ID, 'oneid-iframe'))
+        )
+        driver.switch_to.frame(iframe)
+        print("Switched to iframe.")
 
-        # Click continue
-        continue_button_xpath = '//*[@id="BtnSubmit"]'
-        WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, continue_button_xpath))).click()
+        # Enter email
+        email_field = WebDriverWait(driver, TIMEOUT).until(
+            EC.presence_of_element_located((By.ID, 'InputIdentityFlowValue'))
+        )
+        print("Email field found.")
 
+        # Enter the email
+        email_field.send_keys(DISNEY_EMAIL)
+        print("Email entered.")
+
+        continue_button = WebDriverWait(driver, TIMEOUT).until(
+            EC.element_to_be_clickable((By.ID, 'BtnSubmit'))
+        )
+        continue_button.click()
+        print("Continue button clicked.")
+    except TimeoutException:
+        print("Couldn't find email field or continue button")
+        return
+
+    try:
         # Enter password
         password_input_xpath = '//*[@id="InputPassword"]'
-        password_element = WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, password_input_xpath)))
+        password_element = WebDriverWait(driver, TIMEOUT).until(
+            EC.element_to_be_clickable((By.XPATH, password_input_xpath)))
         password_element.click()
         password_element.send_keys(DISNEY_PASSWORD)
 
