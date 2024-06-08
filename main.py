@@ -14,7 +14,7 @@ import threading
 import time as TIME
 
 # These variables will be used for Texting services
-TIMEOUT = 10
+TIMEOUT = 20 #10
 account_sid  = None
 auth_token = None
 twilio_number = None
@@ -146,8 +146,10 @@ def get_availability(r_list, driver):
             try:
                 element = WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable(
                     (By.XPATH,'//*[@id="diningAvailabilityForm-searchDateid-base"]/div/button')))
-            except:
+            except Exception as e:
                 print("couldn't load page")
+                # print(driver.page_source)  # Print page source for debugging
+                print(e)
                 continue
 
 
