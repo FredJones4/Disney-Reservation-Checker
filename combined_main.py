@@ -74,22 +74,29 @@ def make_reservation():
         return
     # Add implicit wait
     driver.implicitly_wait(10)
-    # Navigate to desired month
-    next_month_button_xpath = '//*[@id="count-selector7"]' # The next OPTION; this one is July.
-    month_name_xpath = '//*[@id="count-selector8"]' # This one is August.
+    # Initial group size
+    cur_size = 8  # Starting with group size 8
     desired_month = "August"  # Change to the desired month
     counter = 0
 
-    while driver.find_element(By.XPATH, month_name_xpath).text.lower() != desired_month.lower():
-        if counter > 6:  # Prevent infinite loop
-            break
+    while cur_size > 1:  # Prevent group size less than 1
+        cur_group_size = f'//*[@id="count-selector{cur_size}"]'
+        next_group_size = f'//*[@id="count-selector{cur_size - 1}"]'
+
+        if counter > 6 or cur_size < 1:  # Prevent infinite loop
+            print("Well, group size was having issues. Ending program.")
+            return
+            # break
+
         try:
             WebDriverWait(driver, TIMEOUT).until(
-                EC.element_to_be_clickable((By.XPATH, next_month_button_xpath))).click()
+                EC.element_to_be_clickable((By.XPATH, cur_group_size))).click()
+            cur_size -= 1  # Decrement group size
+            counter += 1
         except TimeoutException:
-            print("Couldn't click next on calendar")
-            return
-        counter += 1
+            print("Couldn't select group size. Trying again")
+
+    #
 
     # Select the desired date
     day = "25"  # Change to the desired day
