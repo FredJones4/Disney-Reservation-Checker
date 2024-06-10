@@ -43,7 +43,7 @@ def make_reservation():
 
     except TimeoutException:
         print("Couldn't load calendar button")
-        return
+        return False
 
     # Sign in
     try:
@@ -71,7 +71,7 @@ def make_reservation():
         print("Continue button clicked.")
     except TimeoutException:
         print("Couldn't find email field or continue button")
-        return
+        return False
 
     try:
         # Enter password
@@ -88,7 +88,7 @@ def make_reservation():
 
     except TimeoutException:
         print("Couldn't sign in")
-        return
+        return False
     # Add implicit wait
     TIME.sleep(10)
     # Initial group size
@@ -129,7 +129,7 @@ def make_reservation():
         print("Continue button clicked.")
     except TimeoutException:
         print("Couldn't click party size")
-        return
+        return False
 
 
     # Select the desired date
@@ -139,7 +139,7 @@ def make_reservation():
         WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, date_xpath))).click()
     except TimeoutException:
         print("Couldn't select date")
-        return
+        return False
 
     # Select the Next button
     next_xpath = '//*[@id="btnCancel"]'
@@ -147,7 +147,7 @@ def make_reservation():
         WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, next_xpath))).click()
     except TimeoutException:
         print("Couldn't click next")
-        return
+        return False
 
 
     # # Select party size
@@ -180,10 +180,11 @@ def make_reservation():
     reservation_yes_maybe = '/html/body/app-root/div/app-core-layout/div/div[2]/div/app-component-switcher/app-restaurant-details-date-range/div/section[2]/div/div/div'
     try:
         exists = check_xpath_exists(reservation_yes_maybe)
-        print(f"XPath exists: {exists}")
+        return exists
+        # print(f"XPath exists: {exists}")
     except TimeoutException:
         print("No available times found or page took too long to load.")
 
 
-make_reservation()
+print(make_reservation())
 driver.quit()
