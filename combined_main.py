@@ -12,6 +12,15 @@ DISNEY_PASSWORD = 'password123'
 
 driver = webdriver.Chrome()
 
+def close_overlay():
+    try:
+        overlay_xpath = '//*[@id="sec-overlay"]'
+        WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.XPATH, overlay_xpath)))
+        driver.execute_script("document.getElementById('sec-overlay').style.display = 'none';")
+        print("Overlay closed.")
+    except TimeoutException:
+        print("No overlay found.")
+        pass
 
 def make_reservation():
     driver.get("https://disneyworld.disney.go.com/dining/polynesian-resort/ohana/")
@@ -73,79 +82,89 @@ def make_reservation():
         print("Couldn't sign in")
         return
     # Add implicit wait
-    driver.implicitly_wait(10)
+    TIME.sleep(10)
     # Initial group size
     cur_size = 8  # Starting with group size 8
     desired_month = "August"  # Change to the desired month
     counter = 0
-
-    while cur_size > 1:  # Prevent group size less than 1
-        cur_group_size = f'//*[@id="count-selector{cur_size}"]'
-        next_group_size = f'//*[@id="count-selector{cur_size - 1}"]'
-
-        if counter > 6 or cur_size < 1:  # Prevent infinite loop
-            print("Well, group size was having issues. Ending program.")
-            return
-            # break
-
-        try:
-            WebDriverWait(driver, TIMEOUT).until(
-                EC.element_to_be_clickable((By.XPATH, cur_group_size))).click()
-            cur_size -= 1  # Decrement group size
-            counter += 1
-        except TimeoutException:
-            print("Couldn't select group size. Trying again")
-
+    # TODO: make this a one-shot
+    # while cur_size > 1:  # Prevent group size less than 1
+    #     cur_group_size = f'//*[@id="count-selector{cur_size}"]'
+    #     next_group_size = f'//*[@id="count-selector{cur_size - 1}"]'
     #
+    #     if counter > 6 or cur_size < 1:  # Prevent infinite loop
+    #         print("Well, group size was having issues. Moving on:")
+    #         # return
+    #         break
+    #
+    #     try:
+    #         WebDriverWait(driver, TIMEOUT).until(
+    #             EC.element_to_be_clickable((By.XPATH, cur_group_size))).click()
+    #         print("Clicked date.")
+    #         cur_size -= 1  # Decrement group size
+    #         counter += 1
+    #     except TimeoutException:
+    #         print("Couldn't select group size. Trying again")
+
+
+    try:
+        # Group Size Try 2
+        TIME.sleep(5)
+        # Close any overlays if present
+        close_overlay()
+
+        group_size_2 = '//*[@id="count-selector8"]'
+        party_button = WebDriverWait(driver, TIMEOUT).until(
+            EC.element_to_be_clickable((By.XPATH, group_size_2))
+        )
+        party_button.click()
+        print("Continue button clicked.")
+    except TimeoutException:
+        print("Couldn't click party size")
+        return
+
 
     # Select the desired date
-    day = "25"  # Change to the desired day
-    date_xpath = f'//*[@id="ui-datepicker-div"]/table/tbody/tr//a[text()={day}]'
+    day = "2024-06-27"  # NOTE: This can be updated later baesd off the format of the xpaths to iteratively check different days as desired.
+    date_xpath = '/html/body/app-root/div/app-core-layout/div/div[2]/div/app-component-switcher/app-restaurant-details-date-range/div/section[2]/app-search-range-availability-criteria/section[2]/div/div/dpep-date-range-calendar-picker/div/div[1]/dpep-date-range-calendar[1]/div/div[2]/table/tbody/tr[5]/td[5]/div/a'
     try:
         WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, date_xpath))).click()
     except TimeoutException:
         print("Couldn't select date")
         return
 
-    # Select the time
-    time_dropdown_xpath = '//*[@id="searchTime-wrapper"]/div[1]'
+    # Select the Next button
+    next_xpath = '//*[@id="btnCancel"]'
     try:
-        WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, time_dropdown_xpath))).click()
+        WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, next_xpath))).click()
     except TimeoutException:
-        print("Couldn't open time dropdown")
+        print("Couldn't click next")
         return
 
-    reservation_time = "6:00 PM"  # Change to desired time
-    time_option_xpath = f'//*[@data-display="{reservation_time}"]'
-    try:
-        WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, time_option_xpath))).click()
-    except TimeoutException:
-        print("Couldn't select time")
-        return
 
-    # Select party size
-    party_size_dropdown_xpath = '//*[@id="partySize-wrapper"]/div[1]'
-    try:
-        WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, party_size_dropdown_xpath))).click()
-    except TimeoutException:
-        print("Couldn't open party size dropdown")
-        return
-
-    party_size = "4"  # Change to the desired party size
-    party_size_option_xpath = f'//*[@data-value="{party_size}" and @role="option"]'
-    try:
-        WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, party_size_option_xpath))).click()
-    except TimeoutException:
-        print("Couldn't select party size")
-        return
-
-    # Submit the search
-    search_button_xpath = '//*[@id="dineAvailSearchButton"]'
-    try:
-        WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, search_button_xpath))).click()
-    except TimeoutException:
-        print("Couldn't submit search")
-        return
+    # # Select party size
+    # party_size_dropdown_xpath = '//*[@id="partySize-wrapper"]/div[1]'
+    # try:
+    #     WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, party_size_dropdown_xpath))).click()
+    # except TimeoutException:
+    #     print("Couldn't open party size dropdown")
+    #     return
+    #
+    # party_size = "4"  # Change to the desired party size
+    # party_size_option_xpath = f'//*[@data-value="{party_size}" and @role="option"]'
+    # try:
+    #     WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, party_size_option_xpath))).click()
+    # except TimeoutException:
+    #     print("Couldn't select party size")
+    #     return
+    #
+    # # Submit the search
+    # search_button_xpath = '//*[@id="dineAvailSearchButton"]'
+    # try:
+    #     WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, search_button_xpath))).click()
+    # except TimeoutException:
+    #     print("Couldn't submit search")
+    #     return
 
     # Handle the results
     try:
