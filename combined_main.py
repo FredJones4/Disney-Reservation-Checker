@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import time as TIME
 
 TIMEOUT = 20  # Increase timeout
@@ -21,6 +21,14 @@ def close_overlay():
     except TimeoutException:
         print("No overlay found.")
         pass
+
+
+def check_xpath_exists(xpath):
+    try:
+        WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.XPATH, xpath)))
+        return True
+    except (NoSuchElementException, TimeoutException):
+        return False
 
 def make_reservation():
     driver.get("https://disneyworld.disney.go.com/dining/polynesian-resort/ohana/")
@@ -113,7 +121,7 @@ def make_reservation():
         # Close any overlays if present
         close_overlay()
 
-        group_size_2 = '//*[@id="count-selector8"]'
+        group_size_2 = '//*[@id="count-selector9"]'
         party_button = WebDriverWait(driver, TIMEOUT).until(
             EC.element_to_be_clickable((By.XPATH, group_size_2))
         )
@@ -167,11 +175,12 @@ def make_reservation():
     #     return
 
     # Handle the results
+    reservation_not = '/html/body/app-root/div/app-core-layout/div/div[2]/div/app-component-switcher/app-restaurant-details-date-range/div/section[2]/div/div'
+
+    reservation_yes_maybe = '/html/body/app-root/div/app-core-layout/div/div[2]/div/app-component-switcher/app-restaurant-details-date-range/div/section[2]/div/div/div'
     try:
-        available_times = WebDriverWait(driver, TIMEOUT).until(
-            EC.presence_of_all_elements_located((By.CLASS_NAME, 'availableTime')))
-        times = [time.text for time in available_times]
-        print(f"Available times: {times}")
+        exists = check_xpath_exists(reservation_yes_maybe)
+        print(f"XPath exists: {exists}")
     except TimeoutException:
         print("No available times found or page took too long to load.")
 
