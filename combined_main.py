@@ -65,19 +65,21 @@ def make_reservation():
         password_element.send_keys(DISNEY_PASSWORD)
 
         # Click sign-in
-        sign_in_button_xpath = '//*[@id="dssLogin"]/div[2]/button'
+        sign_in_button_xpath = '//*[@id="BtnSubmit"]'  # '//*[@id="dssLogin"]/div[2]/button'
         WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, sign_in_button_xpath))).click()
 
 
     except TimeoutException:
         print("Couldn't sign in")
         return
-
+    # Add implicit wait
+    driver.implicitly_wait(10)
     # Navigate to desired month
-    next_month_button_xpath = '//*[@id="ui-datepicker-div"]/div/a[2]'
-    month_name_xpath = '//*[@id="ui-datepicker-div"]/div/div/span[1]'
-    desired_month = "December"  # Change to the desired month
+    next_month_button_xpath = '//*[@id="count-selector7"]' # The next OPTION; this one is July.
+    month_name_xpath = '//*[@id="count-selector8"]' # This one is August.
+    desired_month = "August"  # Change to the desired month
     counter = 0
+
     while driver.find_element(By.XPATH, month_name_xpath).text.lower() != desired_month.lower():
         if counter > 6:  # Prevent infinite loop
             break
