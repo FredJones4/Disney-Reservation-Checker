@@ -5,15 +5,16 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import time as TIME
 import sched
+from datetime import datetime
 
 TIMEOUT = 20  # Increase timeout
 DISNEY_URL = 'https://disneyworld.disney.go.com/dining/polynesian-resort/ohana/'
 DISNEY_EMAIL = 'fake.email099887@gmail.com'
 DISNEY_PASSWORD = 'password123'
-firstTime = True
 
 driver = webdriver.Chrome()
 scheduler = sched.scheduler(TIME.time, TIME.sleep)
+
 def close_overlay():
     try:
         overlay_xpath = '//*[@id="sec-overlay"]'
@@ -24,7 +25,6 @@ def close_overlay():
         print("No overlay found.")
         pass
 
-
 def check_xpath_exists(xpath):
     try:
         WebDriverWait(driver, TIMEOUT).until(EC.presence_of_element_located((By.XPATH, xpath)))
@@ -32,8 +32,8 @@ def check_xpath_exists(xpath):
     except (NoSuchElementException, TimeoutException):
         return False
 
-def make_reservation():
-    driver.get("https://disneyworld.disney.go.com/dining/polynesian-resort/ohana/")
+def initial_setup():
+    driver.get(DISNEY_URL)
 
     # Add implicit wait
     driver.implicitly_wait(10)
@@ -84,57 +84,36 @@ def make_reservation():
         password_element.send_keys(DISNEY_PASSWORD)
 
         # Click sign-in
-        sign_in_button_xpath = '//*[@id="BtnSubmit"]'  # '//*[@id="dssLogin"]/div[2]/button'
+        sign_in_button_xpath = '//*[@id="BtnSubmit"]'
         WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, sign_in_button_xpath))).click()
-
 
     except TimeoutException:
         print("Couldn't sign in")
         return False
+
     # Add implicit wait
-    TIME.sleep(10)
-    # Initial group size
-    cur_size = 8  # Starting with group size 8
-    desired_month = "August"  # Change to the desired month
-    counter = 0
-    # TODO: make this a one-shot
-    # while cur_size > 1:  # Prevent group size less than 1
-    #     cur_group_size = f'//*[@id="count-selector{cur_size}"]'
-    #     next_group_size = f'//*[@id="count-selector{cur_size - 1}"]'
-    #
-    #     if counter > 6 or cur_size < 1:  # Prevent infinite loop
-    #         print("Well, group size was having issues. Moving on:")
-    #         # return
-    #         break
-    #
-    #     try:
-    #         WebDriverWait(driver, TIMEOUT).until(
-    #             EC.element_to_be_clickable((By.XPATH, cur_group_size))).click()
-    #         print("Clicked date.")
-    #         cur_size -= 1  # Decrement group size
-    #         counter += 1
-    #     except TimeoutException:
-    #         print("Couldn't select group size. Trying again")
+    TIME.sleep(30)
+    return True
 
-
+def check_reservation():
     try:
         # Group Size Try 2
+        TIME.sleep(5)
         # Close any overlays if present
         close_overlay()
 
-        group_size_2 = '//*[@id="count-selector9"]'
+        group_size_2 = '//*[@id="count-selector8"]'
         party_button = WebDriverWait(driver, TIMEOUT).until(
             EC.element_to_be_clickable((By.XPATH, group_size_2))
         )
         party_button.click()
-        print("Continue button clicked.")
+        print("Party size button clicked.")
     except TimeoutException:
         print("Couldn't click party size")
         return False
 
-
     # Select the desired date
-    day = "2024-06-27"  # NOTE: This can be updated later baesd off the format of the xpaths to iteratively check different days as desired.
+    day = "2024-06-27"  # NOTE: This can be updated later based on the format of the xpaths to iteratively check different days as desired.
     date_xpath = '/html/body/app-root/div/app-core-layout/div/div[2]/div/app-component-switcher/app-restaurant-details-date-range/div/section[2]/app-search-range-availability-criteria/section[2]/div/div/dpep-date-range-calendar-picker/div/div[1]/dpep-date-range-calendar[1]/div/div[2]/table/tbody/tr[5]/td[5]/div/a'
     try:
         WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, date_xpath))).click()
@@ -152,31 +131,27 @@ def make_reservation():
 
     # Handle the results
     reservation_not = '/html/body/app-root/div/app-core-layout/div/div[2]/div/app-component-switcher/app-restaurant-details-date-range/div/section[2]/div/div'
-
-    reservation_yes_maybe = '/html/body/app-root/div/app-core-layout/div/div[2]/div/app-component-switcher/app-restaurant-details-date-range/div/section[2]/div/div/div'
+    reservation_yes_maybe = '/html/body/app-root/div/app-core-layout/div/app-component-switcher/app-restaurant-details-date-range/div/section[2]/div/div/div'
     try:
         exists = check_xpath_exists(reservation_yes_maybe)
-        firstTime = False
         return exists
-        # print(f"XPath exists: {exists}")
     except TimeoutException:
         print("No available times found or page took too long to load.")
-
+        return False
 
 def attempt_reservation(sc):
-    if not make_reservation():
+    driver.refresh()
+    if not check_reservation():
         # Schedule the next attempt in 1 minute
         scheduler.enter(60, 1, attempt_reservation, (sc,))
 
 def main():
-    scheduler = sched.scheduler(TIME.time, TIME.sleep)
-    # Initial scheduling
-    scheduler.enter(0, 1, attempt_reservation, (scheduler,))
-    scheduler.run()
-    print(make_reservation(), TIME.time())
-
+    if initial_setup():
+        # Initial scheduling
+        scheduler.enter(0, 1, attempt_reservation, (scheduler,))
+        scheduler.run()
+    print("Reservation attempt completed at", datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
 if __name__ == "__main__":
-    # get_settings()  # set global variables for texting service
     main()
     driver.quit()
