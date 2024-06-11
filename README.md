@@ -1,16 +1,12 @@
-# Disney-Reservation-Checker
+# Disney-Reservation-Checker: Student Edition!
 Checks for reservation availability for Walt Disney World restaurants
 
-# 2024 Update!
-Seems like there is a decent amount of love for this project and I'm sure disney has changed there website a lot since written. I checked today and there seems to be a much different process including having to log in to see reservations. This might be something worth exploring but if you have created a better version of this repo feel free to make an empty PR and I can highlight it on this Project. 
-
-Best of luck with all your disney reservations
 
 ### Purpose
 
 When booking a vacation at Walt Disney World you can reserve a table up to 180 days in advanced. Some of the more desireable
- restraunts will be booked the full 6 months in advanced. This program aims Text the user when a reservation is found by constantly 
- checking for new reservations. 
+ restraunts will be booked the full 6 months in advanced. This program will text the user when a reservation is found by
+constantly checking for new reservations. 
  
  
  ### How it works
@@ -42,7 +38,11 @@ When booking a vacation at Walt Disney World you can reserve a table up to 180 d
  
  This program requires you to have both `accounts.json` & `places.json`
  
- I have included an example of `places.json`. The reservation you want to make is going to be stored in this file. Here is an example:
+ I have included an example of `places.json`. The reservation you want to make is going to be stored in this file.
+ 
+The current iteration of this project does not use places.json, but may use it in a future version.
+
+Here is an example:
  
  
  ```json
@@ -92,7 +92,13 @@ When booking a vacation at Walt Disney World you can reserve a table up to 180 d
  
  
  `accounts.json` is used to text via your Twilio account. you must sign up for your own account which is free. All 
- information must be filled in. 
+ information must be filled in.  
+
+ **NOTE**: The information on accounts.json and disnay_account.json are not pushed to GitHub; they are only stored locally.
+
+Additionally, all phone numbers are only kept on a secure Twilio account. 
+
+Therefore, all data is secure.
   
   
   ```json
