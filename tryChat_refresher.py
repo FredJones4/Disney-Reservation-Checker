@@ -93,9 +93,6 @@ def initial_setup():
 
     # Add implicit wait
     TIME.sleep(30)
-    return True
-
-def check_reservation():
     try:
         # Group Size Try 2
         TIME.sleep(5)
@@ -125,15 +122,20 @@ def check_reservation():
     next_xpath = '//*[@id="btnCancel"]'
     try:
         WebDriverWait(driver, TIMEOUT).until(EC.element_to_be_clickable((By.XPATH, next_xpath))).click()
+        return True
     except TimeoutException:
         print("Couldn't click next")
         return False
+
+
+def check_reservation():
 
     # Handle the results
     reservation_not = '/html/body/app-root/div/app-core-layout/div/div[2]/div/app-component-switcher/app-restaurant-details-date-range/div/section[2]/div/div'
     reservation_yes_maybe = '/html/body/app-root/div/app-core-layout/div/app-component-switcher/app-restaurant-details-date-range/div/section[2]/div/div/div'
     try:
         exists = check_xpath_exists(reservation_yes_maybe)
+        print("Result was ", exists, " completed at", datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         return exists
     except TimeoutException:
         print("No available times found or page took too long to load.")
