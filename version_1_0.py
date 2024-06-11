@@ -13,8 +13,19 @@ from twilio.rest import Client
 
 TIMEOUT = 20  # Increase timeout
 DISNEY_URL = 'https://disneyworld.disney.go.com/dining/polynesian-resort/ohana/'
-DISNEY_EMAIL = 'fake.email099887@gmail.com'
-DISNEY_PASSWORD = 'password123'
+# Path to the disney_account.json file
+json_file_path = 'disney_account.json'
+
+# Initialize variables
+DISNEY_EMAIL = ''
+DISNEY_PASSWORD = ''
+
+# Read the JSON file
+with open(json_file_path, 'r') as file:
+    account_data = json.load(file)
+    DISNEY_EMAIL = account_data.get('email', '')
+    DISNEY_PASSWORD = account_data.get('password', '')
+
 DISNEY_RESERVATION_TITLE = "Ohana at Disney World"
 
 driver = webdriver.Chrome()
