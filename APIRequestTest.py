@@ -5,9 +5,30 @@ import json
 #This one would require web scraping to get the cookie to add to the header.
 # url = "https://disneyworld.disney.go.com/dine-res/api/availability/3/2024-06-26,2024-06-26?facilityId=90002606;entityType=restaurant&entityType=restaurant"
 
-#This one is a public API that doesn't require a cookie.
-url = "https://disneyworld.disney.go.com/dining/dinemenu/api/menu?slug=boatwright-dining-hall&language=en-us"
+# Ask the user to select a restaurant
+print('Select a restaurant to view the menu:')
+print('1. Boatwright Dining Hall')
+print('2. ohana')
+print('3. Cinderella\'s Royal Table')
+print('4. Be Our Guest Restaurant')
+print('5. California Grill')
+input = input('Enter the number of the restaurant: ')
+if input == '1':
+    restaurant = "boatwright-dining-hall"
+elif input == '2':
+    restaurant = "ohana"
+elif input == '3':
+    restaurant = "cinderella-royal-table"
+elif input == '4':
+    restaurant = "be-our-guest-restaurant"
+elif input == '5':
+    restaurant = "california-grill"
+else:
+    print('Invalid input')
+    exit()
 
+#This one is a public API that doesn't require a cookie.
+url = "https://disneyworld.disney.go.com/dining/dinemenu/api/menu?slug="+restaurant+"&language=en-us"
 print("Sending request to:", url)
 
 headers = {
