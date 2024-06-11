@@ -1,0 +1,7 @@
+This is the original message from disney, where the "015177" was the 6 digit code given. In this situation, it might be
+necessary to learn how to grab the code from the email and then input it manually.
+
+It might also be needed to learn how to simply "refresh" the page once all the data has been submitted the first time, so that Disney doesn't get mad when I
+try to log on over and over again.
+
+As of 6:08pm 6/10/2024
