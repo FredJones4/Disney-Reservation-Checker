@@ -2,7 +2,7 @@ import requests
 import json
 
 # The API endpoint URL
-#This one would require web scraping to get the cookie to add to the header.
+# This one would require web scraping to get the cookie to add to the header.
 # url = "https://disneyworld.disney.go.com/dine-res/api/availability/3/2024-06-26,2024-06-26?facilityId=90002606;entityType=restaurant&entityType=restaurant"
 
 # Ask the user to select a restaurant
@@ -17,7 +17,7 @@ if input == '1':
     restaurant = "boatwright-dining-hall"
 elif input == '2':
     restaurant = "ohana"
-elif input == '3':
+elif input == '3': 
     restaurant = "cinderella-royal-table"
 elif input == '4':
     restaurant = "be-our-guest-restaurant"
